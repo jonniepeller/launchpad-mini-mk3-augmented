@@ -5,7 +5,7 @@ from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import SessionOverviewComponent
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
 from novation import sysex
-from novation.novation_base import NovationBase
+from .novation_base_augmented import NovationBase
 from novation.session_modes import SessionModesComponent
 from Launchpad_Mini_MK3 import sysex_ids as ids
 from Launchpad_Mini_MK3.elements import Elements
@@ -17,12 +17,15 @@ from novation.colors import Rgb
 from novation.skin import Colors
 from ableton.v2.control_surface import Layer, merge_skins
 
+import logging
+
 
 class AugmentedColors(Colors):
     class Mixer(Colors.Mixer):
         SendControls = Rgb.PURPLE
 
 
+logger = logging.getLogger(__name__)
 augmented_skin = merge_skins(*(default_mk3_skin, Skin(AugmentedColors)))
 
 
@@ -45,7 +48,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
     def _create_components(self):
         super()._create_components()
         self._create_background()
-        # self._create_stop_solo_mute_modes()
         self._create_session_modes()
         self.__on_layout_switch_value.subject = self._elements.layout_switch
 
@@ -53,50 +55,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
         return super()._create_session_layer() + Layer(
             scene_launch_buttons="scene_launch_buttons"
         )
-
-    def _create_aux_modes(self):
-        self._aux_modes = ModesComponent(
-            name="Aux_Modes",
-            is_enabled=False,
-            support_momentary_mode_cycling=False,
-            layer=Layer(cycle_mode_button=self._elements.scene_launch_buttons_raw[7]),
-        )
-        bottom_rows = self._elements.clip_launch_matrix.submatrix[:, 6:8]
-        self._aux_modes.add_mode(
-            "launch", None, cycle_mode_button_color="Mode.Launch.On"
-        )
-        self._aux_modes.add_mode(
-            "sends", None, cycle_mode_button_color="Mode.Launch.On"
-        )
-
-    # def _create_stop_solo_mute_modes(self):
-    #     self._stop_solo_mute_modes = ModesComponent(
-    #         name="Stop_Solo_Mute_Modes",
-    #         is_enabled=False,
-    #         support_momentary_mode_cycling=False,
-    #         layer=Layer(cycle_mode_button=self._elements.scene_launch_buttons_raw[7]),
-    #     )
-    #     bottom_row = self._elements.clip_launch_matrix.submatrix[:, 7:8]
-    #     self._stop_solo_mute_modes.add_mode(
-    #         "launch", None, cycle_mode_button_color="Mode.Launch.On"
-    #     )
-    #     self._stop_solo_mute_modes.add_mode(
-    #         "stop",
-    #         AddLayerMode(self._session, Layer(stop_track_clip_buttons=bottom_row)),
-    #         cycle_mode_button_color="Session.StopClip",
-    #     )
-    #     self._stop_solo_mute_modes.add_mode(
-    #         "solo",
-    #         AddLayerMode(self._mixer, Layer(solo_buttons=bottom_row)),
-    #         cycle_mode_button_color="Mixer.SoloOn",
-    #     )
-    #     self._stop_solo_mute_modes.add_mode(
-    #         "mute",
-    #         AddLayerMode(self._mixer, Layer(mute_buttons=bottom_row)),
-    #         cycle_mode_button_color="Mixer.MuteOff",
-    #     )
-    #     self._stop_solo_mute_modes.selected_mode = "launch"
-    #     self._stop_solo_mute_modes.set_enabled(True)
 
     def _create_session_modes(self):
         self._session_overview = SessionOverviewComponent(
@@ -114,29 +72,32 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        self._session_modes.add_mode("launch", None)
-        (
-            self._session_modes.add_mode(
-                "overview",
-                (
-                    self._session_overview,
-                    AddLayerMode(
-                        self._session_navigation,
-                        Layer(
-                            page_up_button="up_button",
-                            page_down_button="down_button",
-                            page_left_button="left_button",
-                            page_right_button="right_button",
-                        ),
+        row_7_8 = self._elements.clip_launch_matrix.submatrix[:, 4:8]
+        row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
+        self._session_modes.add_mode(
+            "overview",
+            (
+                self._session_overview,
+                AddLayerMode(
+                    self._session_navigation,
+                    Layer(
+                        page_up_button="up_button",
+                        page_down_button="down_button",
+                        page_left_button="left_button",
+                        page_right_button="right_button",
                     ),
-                    AddLayerMode(
-                        self._background,
-                        Layer(scene_launch_buttons="scene_launch_buttons"),
-                    ),
+                ),
+                AddLayerMode(
+                    self._background,
+                    Layer(scene_launch_buttons="scene_launch_buttons"),
                 ),
             ),
         )
-        self._session_modes.selected_mode = "launch"
+        self._session_modes.add_mode(
+            "sends",
+            AddLayerMode(self._mixer, Layer(send_controls=row_7_8)),
+        )
+        self._session_modes.selected_mode = "sends"
         self._session_modes.set_enabled(True)
         self.__on_session_mode_changed.subject = self._session_modes
 
