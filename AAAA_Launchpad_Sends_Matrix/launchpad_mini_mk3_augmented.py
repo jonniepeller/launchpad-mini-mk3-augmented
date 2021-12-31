@@ -45,7 +45,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
     def _create_components(self):
         super()._create_components()
         self._create_background()
-        self._create_stop_solo_mute_modes()
+        # self._create_stop_solo_mute_modes()
         self._create_session_modes()
         self.__on_layout_switch_value.subject = self._elements.layout_switch
 
@@ -54,34 +54,49 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
             scene_launch_buttons="scene_launch_buttons"
         )
 
-    def _create_stop_solo_mute_modes(self):
-        self._stop_solo_mute_modes = ModesComponent(
-            name="Stop_Solo_Mute_Modes",
+    def _create_aux_modes(self):
+        self._aux_modes = ModesComponent(
+            name="Aux_Modes",
             is_enabled=False,
             support_momentary_mode_cycling=False,
             layer=Layer(cycle_mode_button=self._elements.scene_launch_buttons_raw[7]),
         )
-        bottom_row = self._elements.clip_launch_matrix.submatrix[:, 7:8]
-        self._stop_solo_mute_modes.add_mode(
+        bottom_rows = self._elements.clip_launch_matrix.submatrix[:, 6:8]
+        self._aux_modes.add_mode(
             "launch", None, cycle_mode_button_color="Mode.Launch.On"
         )
-        self._stop_solo_mute_modes.add_mode(
-            "stop",
-            AddLayerMode(self._session, Layer(stop_track_clip_buttons=bottom_row)),
-            cycle_mode_button_color="Session.StopClip",
+        self._aux_modes.add_mode(
+            "sends", None, cycle_mode_button_color="Mode.Launch.On"
         )
-        self._stop_solo_mute_modes.add_mode(
-            "solo",
-            AddLayerMode(self._mixer, Layer(solo_buttons=bottom_row)),
-            cycle_mode_button_color="Mixer.SoloOn",
-        )
-        self._stop_solo_mute_modes.add_mode(
-            "mute",
-            AddLayerMode(self._mixer, Layer(mute_buttons=bottom_row)),
-            cycle_mode_button_color="Mixer.MuteOff",
-        )
-        self._stop_solo_mute_modes.selected_mode = "launch"
-        self._stop_solo_mute_modes.set_enabled(True)
+
+    # def _create_stop_solo_mute_modes(self):
+    #     self._stop_solo_mute_modes = ModesComponent(
+    #         name="Stop_Solo_Mute_Modes",
+    #         is_enabled=False,
+    #         support_momentary_mode_cycling=False,
+    #         layer=Layer(cycle_mode_button=self._elements.scene_launch_buttons_raw[7]),
+    #     )
+    #     bottom_row = self._elements.clip_launch_matrix.submatrix[:, 7:8]
+    #     self._stop_solo_mute_modes.add_mode(
+    #         "launch", None, cycle_mode_button_color="Mode.Launch.On"
+    #     )
+    #     self._stop_solo_mute_modes.add_mode(
+    #         "stop",
+    #         AddLayerMode(self._session, Layer(stop_track_clip_buttons=bottom_row)),
+    #         cycle_mode_button_color="Session.StopClip",
+    #     )
+    #     self._stop_solo_mute_modes.add_mode(
+    #         "solo",
+    #         AddLayerMode(self._mixer, Layer(solo_buttons=bottom_row)),
+    #         cycle_mode_button_color="Mixer.SoloOn",
+    #     )
+    #     self._stop_solo_mute_modes.add_mode(
+    #         "mute",
+    #         AddLayerMode(self._mixer, Layer(mute_buttons=bottom_row)),
+    #         cycle_mode_button_color="Mixer.MuteOff",
+    #     )
+    #     self._stop_solo_mute_modes.selected_mode = "launch"
+    #     self._stop_solo_mute_modes.set_enabled(True)
 
     def _create_session_modes(self):
         self._session_overview = SessionOverviewComponent(
