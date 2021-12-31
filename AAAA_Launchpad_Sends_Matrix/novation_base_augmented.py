@@ -18,11 +18,9 @@ from .mixer_augmented import MixerComponent
 from novation.session_navigation import SessionNavigationComponent
 from novation.skin import skin
 from novation.track_recording import TrackRecordingComponent
-import logging
 
 
 class NovationBase(IdentifiableControlSurface):
-    logger = logging.getLogger(__name__)
     model_family_code = (0, 0)
     element_class = LaunchpadElements
     session_class = SessionComponent

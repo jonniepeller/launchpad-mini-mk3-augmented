@@ -4,10 +4,6 @@ from functools import partial
 from future.moves.itertools import zip_longest
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 class MixerComponent(MixerComponentBase):
     def __getattr__(self, name):
@@ -33,7 +29,5 @@ class MixerComponent(MixerComponentBase):
             send_controls = []
             for send_idx in range(num_sends):
                 if controls:
-                    logger.info(f"channel_idx: {channel_idx}")
-                    logger.info(f"send_idx: {send_idx}")
                     send_controls.append(controls.get_button(send_idx, channel_idx))
             channel_strip.set_send_controls(send_controls)

@@ -17,15 +17,12 @@ from novation.colors import Rgb
 from novation.skin import Colors
 from ableton.v2.control_surface import Layer, merge_skins
 
-import logging
-
 
 class AugmentedColors(Colors):
     class Mixer(Colors.Mixer):
         SendControls = Rgb.PURPLE
 
 
-logger = logging.getLogger(__name__)
 augmented_skin = merge_skins(*(default_mk3_skin, Skin(AugmentedColors)))
 
 
@@ -72,7 +69,8 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        row_7_8 = self._elements.clip_launch_matrix.submatrix[:, 4:8]
+        num_sends = len(self._mixer._song.return_tracks)
+        send_rows = self._elements.clip_launch_matrix.submatrix[:, (8 - num_sends) : 8]
         row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._session_modes.add_mode(
             "overview",
@@ -95,7 +93,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
         )
         self._session_modes.add_mode(
             "sends",
-            AddLayerMode(self._mixer, Layer(send_controls=row_7_8)),
+            AddLayerMode(self._mixer, Layer(send_controls=send_rows)),
         )
         self._session_modes.selected_mode = "sends"
         self._session_modes.set_enabled(True)
