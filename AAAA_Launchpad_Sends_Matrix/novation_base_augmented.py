@@ -11,7 +11,7 @@ from ableton.v2.control_surface.components import (
 )
 from ableton.v2.control_surface.mode import ModesComponent
 from novation import sysex
-from novation.channel_strip import ChannelStripComponent
+from .channel_strip_augmented import ChannelStripComponent
 from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
 from novation.launchpad_elements import LaunchpadElements, SESSION_HEIGHT, SESSION_WIDTH
 from .mixer_augmented import MixerComponent

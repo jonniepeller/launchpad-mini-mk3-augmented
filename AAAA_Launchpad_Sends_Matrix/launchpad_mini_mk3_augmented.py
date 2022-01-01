@@ -1,4 +1,3 @@
-# Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Mini_MK3/launchpad_mini_mk3.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens
 from ableton.v2.control_surface import Layer
@@ -69,8 +68,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        row_7 = self._elements.clip_launch_matrix.submatrix[:, 6:7]
-        row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._session_modes.add_mode(
             "overview",
             (
@@ -90,14 +87,14 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 ),
             ),
         )
+        row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._session_modes.add_mode(
             "sends",
             AddLayerMode(
                 self._mixer,
                 Layer(
                     send_controls=self._elements.clip_launch_matrix,
-                    solo_buttons=row_7,
-                    mute_buttons=row_8,
+                    colored_mute_buttons=row_8,
                 ),
             ),
         )

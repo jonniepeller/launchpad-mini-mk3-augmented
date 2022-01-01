@@ -31,3 +31,7 @@ class MixerComponent(MixerComponentBase):
                 if controls:
                     send_controls.append(controls.get_button(send_idx, channel_idx))
             channel_strip.set_send_controls(send_controls)
+
+    def set_colored_mute_buttons(self, buttons):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
+            strip.set_mute_button(button)
