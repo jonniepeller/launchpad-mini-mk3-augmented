@@ -69,9 +69,8 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        # num_sends = len(self._mixer._song.return_tracks)
-        # send_rows = self._elements.clip_launch_matrix.submatrix[:, (8 - num_sends) : 8]
-        # row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
+        row_7 = self._elements.clip_launch_matrix.submatrix[:, 6:7]
+        row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._session_modes.add_mode(
             "overview",
             (
@@ -85,16 +84,21 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                         page_right_button="right_button",
                     ),
                 ),
-                # AddLayerMode(
-                #     self._background,
-                #     Layer(scene_launch_buttons="scene_launch_buttons"),
-                # ),
+                AddLayerMode(
+                    self._background,
+                    Layer(scene_launch_buttons="scene_launch_buttons"),
+                ),
             ),
         )
         self._session_modes.add_mode(
             "sends",
             AddLayerMode(
-                self._mixer, Layer(send_controls=self._elements.clip_launch_matrix)
+                self._mixer,
+                Layer(
+                    send_controls=self._elements.clip_launch_matrix,
+                    solo_buttons=row_7,
+                    mute_buttons=row_8,
+                ),
             ),
         )
         self._session_modes.selected_mode = "sends"
