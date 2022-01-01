@@ -94,7 +94,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 self._mixer,
                 Layer(
                     send_controls=self._elements.clip_launch_matrix,
-                    colored_mute_buttons=row_8,
+                    mute_buttons=row_8,
                 ),
             ),
         )
