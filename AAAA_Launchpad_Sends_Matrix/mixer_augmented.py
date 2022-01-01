@@ -24,7 +24,8 @@ class MixerComponent(MixerComponentBase):
             strip.set_static_color_value(value)
 
     def set_send_controls(self, controls):
-        num_sends = len(self._song.return_tracks)
+        # 7 rows for sends (bottom row is mute buttons)
+        num_sends = 7
         for channel_idx, channel_strip in enumerate(self._channel_strips):
             send_controls = []
             for send_idx in range(num_sends):
