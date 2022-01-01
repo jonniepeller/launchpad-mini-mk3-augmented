@@ -1,22 +1,20 @@
 import logging
 
-from ableton.v2.control_surface import Layer
-from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
-from Launchpad_Mini_MK3 import Launchpad_Mini_MK3
-from Launchpad_Mini_MK3.skin import skin as default_mk3_skin
-from ableton.v2.control_surface.skin import Skin
-from ableton.v2.control_surface import merge_skins
 from ableton.v2.base import listens
-from novation.colors import Rgb
-from novation.skin import Colors
-from .novation_base_augmented import NovationBase
-from novation import sysex
+from ableton.v2.control_surface import Layer, merge_skins
+from ableton.v2.control_surface.components import SessionOverviewComponent
+from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
+from ableton.v2.control_surface.skin import Skin
 from Launchpad_Mini_MK3 import sysex_ids as ids
 from Launchpad_Mini_MK3.elements import Elements
 from Launchpad_Mini_MK3.notifying_background import NotifyingBackgroundComponent
-from ableton.v2.control_surface.components import SessionOverviewComponent
+from Launchpad_Mini_MK3.skin import skin as default_mk3_skin
+from novation import sysex
+from novation.colors import Rgb
 from novation.session_modes import SessionModesComponent
+from novation.skin import Colors
 
+from .novation_base_augmented import NovationBase
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +22,13 @@ logger = logging.getLogger(__name__)
 class AugmentedColors(Colors):
     class Mixer(Colors.Mixer):
         SendControls = Rgb.PURPLE
+
+    class Mode(Colors.Mode):
+        class Launch(object):
+            On = Rgb.ORANGE
+
+    class Session(Colors.Session):
+        RecordButton = Rgb.ORANGE
 
 
 augmented_skin = merge_skins(*(default_mk3_skin, Skin(AugmentedColors)))
@@ -67,7 +72,9 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
         send_rows = self._elements.clip_launch_matrix.submatrix[:, (8 - num_sends) : 8]
         bottom_row = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._stop_solo_mute_modes.add_mode(
-            u"launch", None, cycle_mode_button_color=u"Mode.Launch.On"
+            u"launch",
+            None,
+            cycle_mode_button_color=u"Mode.Launch.On",
         )
         self._stop_solo_mute_modes.add_mode(
             u"stop",
@@ -108,9 +115,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        # num_sends = len(self._mixer._song.return_tracks)
-        # send_rows = self._elements.clip_launch_matrix.submatrix[:, (8 - num_sends) : 8]
-        # row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
         self._session_modes.add_mode(u"launch", None)
         self._session_modes.add_mode(
             "overview",
@@ -131,10 +135,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBase):
                 ),
             ),
         )
-        # self._session_modes.add_mode(
-        #     "sends",
-        #     AddLayerMode(self._mixer, Layer(send_controls=send_rows)),
-        # )
         self._session_modes.selected_mode = "launch"
         self._session_modes.set_enabled(True)
         self.__on_session_mode_changed.subject = self._session_modes
