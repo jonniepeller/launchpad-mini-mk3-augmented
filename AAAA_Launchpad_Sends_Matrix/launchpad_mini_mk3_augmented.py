@@ -1,6 +1,7 @@
 from ableton.v2.base import listens
 from ableton.v2.control_surface import Layer, merge_skins
 from ableton.v2.control_surface.components import SessionOverviewComponent
+from ableton.v2.control_surface.components.session_ring import SessionRingComponent
 from ableton.v2.control_surface.mode import AddLayerMode
 from ableton.v2.control_surface.skin import Skin
 from Launchpad_Mini_MK3 import sysex_ids as ids
@@ -8,8 +9,10 @@ from Launchpad_Mini_MK3.elements import Elements
 from Launchpad_Mini_MK3.notifying_background import NotifyingBackgroundComponent
 from Launchpad_Mini_MK3.skin import skin as default_mk3_skin
 from novation import sysex
-from novation.colors import Rgb
+from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
+from novation.launchpad_elements import SESSION_WIDTH
 from novation.session_modes import SessionModesComponent
+from novation.session_navigation import SessionNavigationComponent
 from novation.skin import Colors
 
 from .novation_base_augmented import NovationBaseAugmented
@@ -43,6 +46,32 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
         self._create_background()
         self._create_sends_mode()
         self.__on_layout_switch_value.subject = self._elements.layout_switch
+
+    def _create_session(self):
+        self._session_ring = SessionRingComponent(
+            name="Session_Ring",
+            is_enabled=False,
+            num_tracks=SESSION_WIDTH,
+            num_scenes=self.session_height,
+            tracks_to_use=lambda: tuple(self.song.visible_tracks)
+            + tuple(self.song.return_tracks)
+            + (self.song.master_track,),
+        )
+        self._session = self.session_class(
+            name="Session",
+            is_enabled=False,
+            session_ring=self._session_ring,
+            layer=self._create_session_layer(),
+        )
+        self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
+        self._session.set_enabled(True)
+        self._session_navigation = SessionNavigationComponent(
+            name="Session_Navigation",
+            is_enabled=False,
+            session_ring=self._session_ring,
+            layer=self._create_session_navigation_layer(),
+        )
+        self._session_navigation.set_enabled(True)
 
     def _create_sends_mode(self):
         self._session_overview = SessionOverviewComponent(
