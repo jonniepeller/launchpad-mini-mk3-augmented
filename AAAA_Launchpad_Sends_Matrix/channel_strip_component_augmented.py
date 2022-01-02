@@ -1,4 +1,4 @@
-from novation.channel_strip import ChannelStripComponent as ChannelStripComponentBase
+from novation.channel_strip import ChannelStripComponent
 from itertools import chain
 from ableton.v2.base import liveobj_valid
 import logging
@@ -8,7 +8,7 @@ from novation.colors import CLIP_COLOR_TABLE
 logger = logging.getLogger(__name__)
 
 
-class ChannelStripComponent(ChannelStripComponentBase):
+class ChannelStripComponentAugmented(ChannelStripComponent):
     def __init__(self, *a, **k):
         super().__init__(*a, **k)
 

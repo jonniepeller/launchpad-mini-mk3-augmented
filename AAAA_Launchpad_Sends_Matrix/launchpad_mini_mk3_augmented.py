@@ -4,7 +4,7 @@ from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import SessionOverviewComponent
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
 from novation import sysex
-from .novation_base_augmented import NovationBase
+from .novation_base_augmented import NovationBaseAugmented
 from novation.session_modes import SessionModesComponent
 from Launchpad_Mini_MK3 import sysex_ids as ids
 from Launchpad_Mini_MK3.elements import Elements
@@ -25,7 +25,7 @@ class AugmentedColors(Colors):
 augmented_skin = merge_skins(*(default_mk3_skin, Skin(AugmentedColors)))
 
 
-class Launchpad_Mini_MK3_Augmented(NovationBase):
+class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
     skin = augmented_skin
 
     model_family_code = ids.LP_MINI_MK3_FAMILY_CODE
