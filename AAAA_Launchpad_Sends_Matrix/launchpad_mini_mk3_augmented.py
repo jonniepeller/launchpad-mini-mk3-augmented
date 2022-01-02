@@ -1,20 +1,20 @@
 from __future__ import absolute_import, print_function, unicode_literals
+
 from ableton.v2.base import listens
-from ableton.v2.control_surface import Layer
+from ableton.v2.control_surface import Layer, merge_skins
 from ableton.v2.control_surface.components import SessionOverviewComponent
-from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
-from novation import sysex
-from .novation_base_augmented import NovationBaseAugmented
-from novation.session_modes import SessionModesComponent
+from ableton.v2.control_surface.mode import AddLayerMode
+from ableton.v2.control_surface.skin import Skin
 from Launchpad_Mini_MK3 import sysex_ids as ids
 from Launchpad_Mini_MK3.elements import Elements
 from Launchpad_Mini_MK3.notifying_background import NotifyingBackgroundComponent
-from ableton.v2.control_surface.skin import Skin
-from novation.skin import skin
 from Launchpad_Mini_MK3.skin import skin as default_mk3_skin
+from novation import sysex
 from novation.colors import Rgb
+from novation.session_modes import SessionModesComponent
 from novation.skin import Colors
-from ableton.v2.control_surface import Layer, merge_skins
+
+from .novation_base_augmented import NovationBaseAugmented
 
 
 class ColorsAugmented(Colors):
@@ -47,9 +47,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
         self.__on_layout_switch_value.subject = self._elements.layout_switch
 
     def _create_session_layer(self):
-        return super()._create_session_layer() + Layer(
-            scene_launch_buttons="scene_launch_buttons"
-        )
+        return super()._create_session_layer()
 
     def _create_session_modes(self):
         self._session_overview = SessionOverviewComponent(
@@ -57,7 +55,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
             is_enabled=False,
             session_ring=self._session_ring,
             enable_skinning=True,
-            layer=Layer(button_matrix="clip_launch_matrix"),
         )
         self._session_modes = SessionModesComponent(
             name="Session_Modes",
@@ -79,10 +76,6 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
                         page_left_button="left_button",
                         page_right_button="right_button",
                     ),
-                ),
-                AddLayerMode(
-                    self._background,
-                    Layer(scene_launch_buttons="scene_launch_buttons"),
                 ),
             ),
         )
