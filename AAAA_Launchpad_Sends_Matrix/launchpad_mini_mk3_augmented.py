@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function, unicode_literals
-
 from ableton.v2.base import listens
 from ableton.v2.control_surface import Layer, merge_skins
 from ableton.v2.control_surface.components import SessionOverviewComponent
@@ -43,20 +41,17 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
     def _create_components(self):
         super()._create_components()
         self._create_background()
-        self._create_session_modes()
+        self._create_sends_mode()
         self.__on_layout_switch_value.subject = self._elements.layout_switch
 
-    def _create_session_layer(self):
-        return super()._create_session_layer()
-
-    def _create_session_modes(self):
+    def _create_sends_mode(self):
         self._session_overview = SessionOverviewComponent(
             name="Session_Overview",
             is_enabled=False,
             session_ring=self._session_ring,
             enable_skinning=True,
         )
-        self._session_modes = SessionModesComponent(
+        self._sends_mode = SessionModesComponent(
             name="Session_Modes",
             is_enabled=False,
             layer=Layer(
@@ -64,7 +59,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
                 mode_button_color_control="session_button_color_element",
             ),
         )
-        self._session_modes.add_mode(
+        self._sends_mode.add_mode(
             "overview",
             (
                 self._session_overview,
@@ -80,7 +75,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
             ),
         )
         row_8 = self._elements.clip_launch_matrix.submatrix[:, 7:8]
-        self._session_modes.add_mode(
+        self._sends_mode.add_mode(
             "sends",
             AddLayerMode(
                 self._mixer,
@@ -90,9 +85,9 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
                 ),
             ),
         )
-        self._session_modes.selected_mode = "sends"
-        self._session_modes.set_enabled(True)
-        self.__on_session_mode_changed.subject = self._session_modes
+        self._sends_mode.selected_mode = "sends"
+        self._sends_mode.set_enabled(True)
+        self.__on_sends_mode_changed.subject = self._sends_mode
 
     def _create_background(self):
         self._background = NotifyingBackgroundComponent(
@@ -109,7 +104,7 @@ class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
         self.__on_background_control_value.subject = self._background
 
     @listens("selected_mode")
-    def __on_session_mode_changed(self, _):
+    def __on_sends_mode_changed(self, _):
         self._elements.layout_switch.enquire_value()
 
     @listens("value")
