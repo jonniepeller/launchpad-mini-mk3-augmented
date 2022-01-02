@@ -9,9 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class ChannelStripComponentAugmented(ChannelStripComponent):
-    def __init__(self, *a, **k):
-        super().__init__(*a, **k)
-
     def _on_mute_changed(self):
         if self.is_enabled() and self._mute_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:

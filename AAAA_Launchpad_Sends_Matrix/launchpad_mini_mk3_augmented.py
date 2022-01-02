@@ -17,20 +17,19 @@ from novation.skin import Colors
 from ableton.v2.control_surface import Layer, merge_skins
 
 
-class AugmentedColors(Colors):
+class ColorsAugmented(Colors):
     class Mixer(Colors.Mixer):
         SendControls = Rgb.PURPLE
 
 
-augmented_skin = merge_skins(*(default_mk3_skin, Skin(AugmentedColors)))
+augmented_skin = merge_skins(*(default_mk3_skin, Skin(ColorsAugmented)))
 
 
 class Launchpad_Mini_MK3_Augmented(NovationBaseAugmented):
-    skin = augmented_skin
 
     model_family_code = ids.LP_MINI_MK3_FAMILY_CODE
     element_class = Elements
-    skin = skin
+    skin = augmented_skin
 
     def __init__(self, *a, **k):
         self._last_layout_byte = sysex.SESSION_LAYOUT_BYTE
